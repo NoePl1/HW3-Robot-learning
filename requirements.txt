@@ -20,7 +20,7 @@ atari_py==0.2.6
 protobuf==3.20
 networkx==2.5
 pytest==7.4.3
-pandas==2.0.3
+pandas==1.2.3
 chardet==5.2.0
 comet_ml
 roboverse @ git+https://github.com/montrealrobotics/roboverse@main
