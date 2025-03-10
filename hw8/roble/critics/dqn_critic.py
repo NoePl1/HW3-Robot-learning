@@ -4,7 +4,7 @@ import torch.optim as optim
 from torch.nn import utils
 from torch import nn
 
-from hw1.roble.infrastructure import pytorch_util as ptu
+from hw8.roble.infrastructure import pytorch_util as ptu
 
 class DQNCritic(BaseCritic):
     import hw1.roble.util.class_util as classu

@@ -9,14 +9,14 @@ import gym
 from gym import wrappers
 import numpy as np
 import torch
-from hw5.roble.infrastructure import pytorch_util as ptu
-from hw5.roble.infrastructure.atari_wrappers import ReturnWrapper
+from hw8.roble.infrastructure import pytorch_util as ptu
+from hw8.roble.infrastructure.atari_wrappers import ReturnWrapper
 
-from hw5.roble.infrastructure import utils
-from hw5.roble.infrastructure.logger import Logger
+from hw8.roble.infrastructure import utils
+from hw8.roble.infrastructure.logger import Logger
 
-from hw5.roble.agents.explore_or_exploit_agent import ExplorationOrExploitationAgent
-from hw5.roble.infrastructure.dqn_utils import (
+from hw8.roble.agents.explore_or_exploit_agent import ExplorationOrExploitationAgent
+from hw8.roble.infrastructure.dqn_utils import (
         get_wrapper_by_name,
         register_custom_envs,
 )
@@ -231,11 +231,49 @@ class RL_Trainer(object):
             train_video_paths: paths which also contain videos for visualization purposes
         """
         # TODO: get this from hw1 or hw2
+        if itr == 0:
+            if self._params['env']['env_name'] == 'Visual-cube':
+                ob_dtype = np.uint8
+                action_dtype = np.float32
+
+                loaded_paths = og.load_dataset(
+                    initial_expertdata,
+                    ob_dtype=ob_dtype,
+                    action_dtype=action_dtype,
+                    compact_dataset=False,
+                )
+            else:
+                print(f'itr = {itr}, Loading initial expert data')
+                with open(load_initial_expertdata, 'rb') as f:
+                    loaded_paths = pickle.load(f)  # Load expert data from a file
+            return loaded_paths, 0, None  # Return loaded data
+
+        print("\nCollecting data to be used for training...")
+
+        paths, envsteps_this_batch = (utils.sample_trajectories(
+            self._env,
+            collect_policy,
+            batch_size,
+            self._params['env']['max_episode_length']))
+        # collect more rollouts with the same policy, to be saved as videos in tensorboard
+        # note: here, we collect MAX_NVIDEO rollouts, each of length MAX_VIDEO_LEN
+
+        train_video_paths = None
+        if self._log_video:
+            print('\nCollecting train rollouts to be used for saving videos...')
+            train_video_paths = utils.sample_n_trajectories(self._env, collect_policy, MAX_NVIDEO, MAX_VIDEO_LEN, True)
         return paths, envsteps_this_batch, train_video_paths
     
     def train_agent(self):
-        # TODO: get this from hw1 or hw2
-        return all_logs
+        print('\nTraining agent using sampled data from replay buffer...')
+        all_logs = []
+        for train_step in range(self._params['alg']['num_agent_train_steps_per_iter']):
+            ob_batch, ac_batch, re_batch, next_ob_batch, terminal_batch = self._agent.sample(
+                self._params["alg"]["train_batch_size"])  # M
+
+            train_log = self._agent.train(ob_batch, ac_batch, re_batch, next_ob_batch, terminal_batch)  # M
+            all_logs.append(train_log)
+            return all_logs
 
     ####################################
     ####################################

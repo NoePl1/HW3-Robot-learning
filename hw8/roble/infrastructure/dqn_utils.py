@@ -9,7 +9,7 @@ import numpy as np
 from torch import nn
 import torch.optim as optim
 
-from hw5.roble.infrastructure.atari_wrappers import wrap_deepmind
+from hw8.roble.infrastructure.atari_wrappers import wrap_deepmind
 from gym.envs.registration import register
 
 import torch
