@@ -23,6 +23,7 @@ alg:
     use_boltzmann: True
     no_gpu: False
     gpu_id: 0
+    which_gpu: 0 #ADDED THIS
     double_q: True
     num_agent_train_steps_per_iter: 1 ## Number of training updates after #batch_size experience is collected. 
     num_critic_updates_per_agent_update: 1 ## Number of training updates after #batch_size experience is collected.
