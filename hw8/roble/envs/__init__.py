@@ -40,7 +40,7 @@ def register_envs():
     )
     register(
         id="PointmassHard-v0",
-        entry_point="hw8.roble.envs.pointmass:PointmassHardEnv",  # ✅ Fix this path if needed
+        entry_point="hw8.roble.envs.pointmass:Pointmass",  # ✅ Fix this path if needed
         max_episode_steps=200,
     )
     register(
