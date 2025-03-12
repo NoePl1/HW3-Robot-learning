@@ -5,7 +5,7 @@ env:
     atari: True
 
 alg:
-    rl_alg: 'explore_or_exploit' ## RL training algorithm ['explore_exploit', 'cql', 'safe_rl']
+    rl_alg: 'dqn' ## RL training algorithm ['explore_exploit', 'dqn', 'cql', 'safe_rl']
     n_iter: 50000
     batch_size: 256        ## The min amount of experience to collect before a training update
     train_batch_size: 256  ## training batch size used for computing gradients of q function or policy

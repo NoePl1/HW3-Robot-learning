@@ -22,7 +22,7 @@ from hw8.roble.infrastructure.dqn_utils import (
 )
 
 #register all of our envs
-import hw5.roble.envs
+import hw8.roble.envs
 
 # how many rollouts to save as videos to tensorboard
 MAX_NVIDEO = 2
