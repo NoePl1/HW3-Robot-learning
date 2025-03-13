@@ -56,7 +56,7 @@ class DrunkSpider(gym.Env):
     """
 
     import matplotlib
-    matplotlib.use('Agg')
+    #matplotlib.use('Agg')
     import matplotlib.pyplot as plt
     self.plt = plt
     self.fig = self.plt.figure()

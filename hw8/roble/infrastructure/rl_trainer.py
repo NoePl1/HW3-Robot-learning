@@ -63,7 +63,7 @@ class RL_Trainer(object):
         print(self.params['env']['env_name'])
         if not ('pointmass' in self.params['env']['env_name']):
             import matplotlib
-            matplotlib.use('Agg')
+            #matplotlib.use('Agg')
             self.env.set_logdir(self.params['logging']['logdir'] + '/expl_')
             self.eval_env.set_logdir(self.params['logging']['logdir'] + '/eval_')
 
