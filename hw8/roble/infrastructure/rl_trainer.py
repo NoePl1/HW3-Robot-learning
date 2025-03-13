@@ -275,6 +275,8 @@ class RL_Trainer(object):
                 self.params["alg"]["train_batch_size"])  # M
 
             train_log = self.agent.train(ob_batch, ac_batch, re_batch, next_ob_batch, terminal_batch)  # M
+            if t % self.params['target_update_freq'] == 0:
+                self.agent.critic.update_target_network()
             all_logs.append(train_log)
             return all_logs
 
