@@ -76,19 +76,19 @@ class RL_Trainer(object):
             # These operations are currently only for Atari envs
             self.env = wrappers.RecordEpisodeStatistics(self.env, deque_size=1000)
             self.env = ReturnWrapper(self.env)
-            self.env = wrappers.RecordVideo(self.env, os.path.join(self.params['logging']['logdir'], "gym"), episode_trigger=self.episode_trigger)
+            #self.env = wrappers.RecordVideo(self.env, os.path.join(self.params['logging']['logdir'], "gym"), episode_trigger=self.episode_trigger)
             self.env = params['env_wrappers'](self.env)
 
             self.eval_env = wrappers.RecordEpisodeStatistics(self.eval_env, deque_size=1000)
             self.eval_env = ReturnWrapper(self.eval_env)
-            self.eval_env = wrappers.RecordVideo(self.eval_env, os.path.join(self.params['logging']['logdir'], "gym"), episode_trigger=self.episode_trigger)
+            #self.eval_env = wrappers.RecordVideo(self.eval_env, os.path.join(self.params['logging']['logdir'], "gym"), episode_trigger=self.episode_trigger)
             self.eval_env = params['env_wrappers'](self.eval_env)
 
             self.mean_episode_reward = -float('nan')
             self.best_mean_episode_reward = -float('inf')
         if 'non_atari_colab_env' in self.params and self.params['logging']['video_log_freq'] > 0:
-            self.env = wrappers.RecordVideo(self.env, os.path.join(self.params['logging']['logdir'], "gym"), episode_trigger=self.episode_trigger)
-            self.eval_env = wrappers.RecordVideo(self.eval_env, os.path.join(self.params['logging']['logdir'], "gym"), episode_trigger=self.episode_trigger)
+            #self.env = wrappers.RecordVideo(self.env, os.path.join(self.params['logging']['logdir'], "gym"), episode_trigger=self.episode_trigger)
+            #self.eval_env = wrappers.RecordVideo(self.eval_env, os.path.join(self.params['logging']['logdir'], "gym"), episode_trigger=self.episode_trigger)
 
             self.mean_episode_reward = -float('nan')
             self.best_mean_episode_reward = -float('inf')
