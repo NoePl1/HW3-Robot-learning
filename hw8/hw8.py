@@ -12,6 +12,9 @@ from hw8.roble.infrastructure.dqn_utils import get_env_kwargs, PiecewiseSchedule
 
 from omegaconf import DictConfig, OmegaConf
 
+sys.path.append("/teamspace/studios/this_studio/HW3-Robot-learning")
+sys.path.append("/teamspace/studios/this_studio/HW3-Robot-learning/hw8")
+
 class Q_Trainer(object):
 
     def __init__(self, params):

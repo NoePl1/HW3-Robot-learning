@@ -9,6 +9,8 @@ import gym
 from gym import wrappers
 import numpy as np
 import torch
+
+from hw8.roble.agents.dqn_agent import DQNAgent
 from hw8.roble.infrastructure import pytorch_util as ptu
 from hw8.roble.infrastructure.atari_wrappers import ReturnWrapper
 
@@ -168,7 +170,7 @@ class RL_Trainer(object):
                 self.logmetrics = False
 
             # collect trajectories, to be used for training
-            if isinstance(self.agent, ExplorationOrExploitationAgent):
+            if isinstance(self.agent, ExplorationOrExploitationAgent) or isinstance(self.agent, DQNAgent):
                 self.agent.step_env()
                 envsteps_this_batch = 1
                 train_video_paths = None
@@ -208,7 +210,7 @@ class RL_Trainer(object):
             if self.logvideo or self.logmetrics:
                 # perform logging
                 print('\nBeginning logging procedure...')
-                if isinstance(self.agent, ExplorationOrExploitationAgent):
+                if isinstance(self.agent, ExplorationOrExploitationAgent) or isinstance(self.agent, DQNAgent):
                     self.perform_dqn_logging(all_logs)
                 else:
                     self.perform_logging(itr, paths, eval_policy, train_video_paths, all_logs)
@@ -267,11 +269,12 @@ class RL_Trainer(object):
     def train_agent(self):
         print('\nTraining agent using sampled data from replay buffer...')
         all_logs = []
-        for train_step in range(self._params['alg']['num_agent_train_steps_per_iter']):
-            ob_batch, ac_batch, re_batch, next_ob_batch, terminal_batch = self._agent.sample(
-                self._params["alg"]["train_batch_size"])  # M
+        for t in range(self.params['num_timesteps']):
+            self.agent.step_env()
+            ob_batch, ac_batch, re_batch, next_ob_batch, terminal_batch = self.agent.sample(
+                self.params["alg"]["train_batch_size"])  # M
 
-            train_log = self._agent.train(ob_batch, ac_batch, re_batch, next_ob_batch, terminal_batch)  # M
+            train_log = self.agent.train(ob_batch, ac_batch, re_batch, next_ob_batch, terminal_batch)  # M
             all_logs.append(train_log)
             return all_logs
 
