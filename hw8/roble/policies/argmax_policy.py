@@ -25,16 +25,16 @@ class ArgMaxPolicy(object):
         # at the current observation as the output (get it from hw3)
         # NOTE: you should adapt your code so that it considers the boltzmann distribution case
 
-        q_values = TODO
+        q_values = self.critic.qa_values(obs)
 
         if self.use_boltzmann:
             distribution = np.exp(q_values) / np.sum(np.exp(q_values))
             action = self.sample_discrete(distribution)
 
         else:
-            action = TODO
+            action = q_values.argmax(axis=1)
 
-        return TODO
+        return action
 
     def sample_discrete(self, p):
         # https://stackoverflow.com/questions/40474436/how-to-apply-numpy-random-choice-to-a-matrix-of-probability-values-vectorized-s

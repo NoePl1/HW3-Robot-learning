@@ -33,7 +33,10 @@ class DQNAgent(object):
         self.num_param_updates = 0
 
     def add_to_replay_buffer(self, paths):
-        pass
+        for path in paths:
+            self.replay_buffer_idx = self.replay_buffer.store_frame(path["observation"])
+            self.replay_buffer.encode_recent_observation()
+            self.replay_buffer.store_effect(self.replay_buffer_idx, path["action"], path["reward"], path["terminal"])
 
     def step_env(self):
         """
@@ -42,8 +45,18 @@ class DQNAgent(object):
             advanced one step, and the replay buffer should contain one more transition.
             Note that self.last_obs must always point to the new latest observation.
         """
-        raise NotImplementedError
-        # Not needed for this homework
+        #might need epsilon?
+        action = self.actor.get_action(self.last_obs)
+        new_obs, reward, terminated, _, _, _ = self.env.step(action)
+
+        path = {
+            'observation' : self.last_obs,
+            'action' : action,
+            'reward' : reward,
+            'terminated' : terminated
+        }
+        self.add_to_replay_buffer(path)
+        self.last_obs = new_obs
 
     ####################################
     ####################################
