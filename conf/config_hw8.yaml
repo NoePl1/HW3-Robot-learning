@@ -1,5 +1,5 @@
 env:
-    env_name: "PointmassHard-v0" #['PointmassEasy-v0', 'PointmassMedium-v0', 'PointmassHard-v0', 'PointmassVeryHard-v0', 'DrunkSpider-v0']
+    env_name: "LunarLander-v3" #['MsPacman-v0','LunarLander-v3','PointmassEasy-v0', 'PointmassMedium-v0', 'PointmassHard-v0', 'PointmassVeryHard-v0', 'DrunkSpider-v0']
     max_episode_length: 200
     exp_name: 'todo'
     atari: True
