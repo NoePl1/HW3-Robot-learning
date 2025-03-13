@@ -416,6 +416,8 @@ class LunarLander(gym.Env):
     def step(self, *args, **kwargs):
         return self._step(*args, **kwargs)
 
+    def set_logdir(self, path):
+        self.traj_filepath = path + 'last_traj.png'
 
 class LunarLanderContinuous(LunarLander):
    continuous = True
