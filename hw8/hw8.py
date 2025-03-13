@@ -1,6 +1,9 @@
 import os
 import time
 import sys
+
+from run_hw8_offrl import my_main
+
 print(sys.path)
 import hydra, json
 
@@ -108,10 +111,6 @@ def my_app(cfg: DictConfig):
 
     trainer = Q_Trainer(params)
     trainer.run_training_loop()
-
-@hydra.main(config_path="config", config_name="default_config")
-def my_main(cfg: DictConfig):
-    my_app(cfg)
 
 if __name__ == "__main__":
     import os
