@@ -2,8 +2,6 @@ import os
 import time
 import sys
 
-from run_hw8_offrl import my_main
-
 print(sys.path)
 import hydra, json
 
