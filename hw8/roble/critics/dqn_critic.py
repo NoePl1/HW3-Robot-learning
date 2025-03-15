@@ -11,17 +11,17 @@ class DQNCritic(BaseCritic):
     @classu.hidden_member_initialize
     def __init__(self, **kwargs):
         super().__init__()
-        self.ob_dim = kwargs['ob_dim']
+        self.ob_dim = kwargs['alg']['ob_dim']
 
         if isinstance(self.ob_dim, int):
             self.input_shape = (self.ob_dim,)
         else:
             self.input_shape = kwargs['input_shape']
             
-        self.ac_dim = kwargs['ac_dim']
-        self.double_q = kwargs['double_q']
-        self.grad_norm_clipping = kwargs['grad_norm_clipping']
-        self.gamma = kwargs['gamma']
+        self.ac_dim = kwargs['alg']['ac_dim']
+        self.double_q = kwargs['alg']['double_q']
+        self.grad_norm_clipping = kwargs['alg']['grad_norm_clipping']
+        self.gamma = kwargs['alg']['gamma']
 
         self.optimizer_spec = kwargs["optimizer_spec"]
         network_initializer = kwargs['q_func']
@@ -56,16 +56,21 @@ class DQNCritic(BaseCritic):
             returns:
                 nothing
         """
+        #print("ob_no before from_numpy: ", ob_no.shape)
         ob_no = ptu.from_numpy(ob_no)
+        #print("ob_no before from_numpy: ", ob_no.shape)
         ac_na = ptu.from_numpy(ac_na).to(torch.long)
+        #print("next_ob_no before from_numpy: ", next_ob_no.shape)
         next_ob_no = ptu.from_numpy(next_ob_no)
+        #print("next_ob_no after from_numpy: ", next_ob_no.shape)
         reward_n = ptu.from_numpy(reward_n)
         terminal_n = ptu.from_numpy(terminal_n)
         qa_t_values = self.q_net(ob_no)
         q_t_values = torch.gather(qa_t_values, 1, ac_na.unsqueeze(1)).squeeze(1)
-        
+
         # TODO compute the Q-values from the target network 
         qa_tp1_values = self.q_net_target(next_ob_no)
+
 
         if self.double_q:
             # You must fill this part for Q2 of the Q-learning portion of the homework.
@@ -78,10 +83,11 @@ class DQNCritic(BaseCritic):
         else:
             q_tp1, _ = qa_tp1_values.max(dim=1)
 
+
         # TODO compute targets for minimizing Bellman error
         # HINT: as you saw in lecture, this would be:
             #currentReward + self.gamma * qValuesOfNextTimestep * (not terminal)
-        target = reward_n + self.gamma * q_tp1 * (1-terminal_n)
+        target = reward_n+ self.gamma * q_tp1.squeeze(1) * (1-terminal_n)
         target = target.detach()
         
         assert q_t_values.shape == target.shape
@@ -93,7 +99,7 @@ class DQNCritic(BaseCritic):
         self.optimizer.step()
         self.learning_rate_scheduler.step()
         return {
-            'Training Loss': ptu.to_numpy(loss),
+            'Training_Loss': ptu.to_numpy(loss),
         }
 
     def update_target_network(self):

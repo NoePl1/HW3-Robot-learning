@@ -184,9 +184,9 @@ class RL_Trainer(object):
                         itr, initial_expertdata, collect_policy, use_batchsize)
                 )
 
-            
-            if (not self.agent.offline_exploitation) or (self.agent.t <= self.agent.num_exploration_steps):
-                self.total_envsteps += envsteps_this_batch
+            if isinstance(self.agent, ExplorationOrExploitationAgent):
+                if (not self.agent.offline_exploitation) or (self.agent.t <= self.agent.num_exploration_steps):
+                    self.total_envsteps += envsteps_this_batch
 
             # relabel the collected obs with actions from a provided expert policy
             if relabel_with_expert and itr>=start_relabel_with_expert:
@@ -268,17 +268,21 @@ class RL_Trainer(object):
     
     def train_agent(self):
         print('\nTraining agent using sampled data from replay buffer...')
-        all_logs = []
-        for t in range(self.params['num_timesteps']):
-            self.agent.step_env()
+        all_logs = [{'loss': 0}]
+        for t in range(1, self.params['alg']['num_timesteps']):
             ob_batch, ac_batch, re_batch, next_ob_batch, terminal_batch = self.agent.sample(
                 self.params["alg"]["train_batch_size"])  # M
 
-            train_log = self.agent.train(ob_batch, ac_batch, re_batch, next_ob_batch, terminal_batch)  # M
-            if t % self.params['target_update_freq'] == 0:
-                self.agent.critic.update_target_network()
-            all_logs.append(train_log)
-            return all_logs
+            if ob_batch != np.array([]):
+                #print("next_ob_batch in train_agent: ", next_ob_batch.shape )
+                train_log = self.agent.train(ob_batch, ac_batch, re_batch, next_ob_batch, terminal_batch)  # M
+                if t % self.params['alg']['target_update_freq'] == 0:
+                    self.agent.critic.update_target_network()
+                all_logs.append(train_log)
+
+            self.agent.step_env()
+
+        return all_logs
 
     ####################################
     ####################################
@@ -317,7 +321,7 @@ class RL_Trainer(object):
 
         logs.update(last_log)
         
-        eval_paths, eval_envsteps_this_batch = utils.sample_trajectories(self.eval_env, self.agent.eval_policy, self.params['alg']['eval_batch_size'], self.params['env']['max_episode_length'])
+        eval_paths, eval_envsteps_this_batch = utils.sample_trajectories(self.eval_env, self.agent.actor, self.params['alg']['eval_batch_size'], self.params['env']['max_episode_length'])
         
         eval_returns = [eval_path["reward"].sum() for eval_path in eval_paths]
         eval_ep_lens = [len(eval_path["reward"]) for eval_path in eval_paths]
@@ -328,7 +332,7 @@ class RL_Trainer(object):
         logs["Eval_MinReturn"] = np.min(eval_returns)
         logs["Eval_AverageEpLen"] = np.mean(eval_ep_lens)
         
-        logs['Buffer size'] = self.agent.replay_buffer.num_in_buffer
+        logs['Buffer_size'] = self.agent.replay_buffer.num_in_buffer
 
         sys.stdout.flush()
 

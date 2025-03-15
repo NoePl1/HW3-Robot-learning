@@ -100,7 +100,7 @@ def get_env_kwargs(env_name):
             'target_update_freq': 3000,
             'grad_norm_clipping': 10,
             'lander': True,
-            'num_timesteps': 500000,
+            'num_timesteps': 100,
             'env_wrappers': lunar_empty_wrapper
         }
         kwargs['exploration_schedule'] = lander_exploration_schedule(kwargs['num_timesteps'])
@@ -144,7 +144,8 @@ def get_env_kwargs(env_name):
         kwargs['exploration_schedule'] = lander_exploration_schedule(kwargs['num_timesteps'])
 
     else:
-        raise NotImplementedError
+        pass
+        #raise NotImplementedError
 
     return kwargs
 
@@ -563,7 +564,7 @@ class MemoryOptimizedReplayBuffer(object):
             self.obs      = np.empty([self.size] + list(frame.shape), dtype=np.float32 if self.float_obs else np.uint8)
             self.action   = np.empty([self.size],                     dtype=np.int32)
             self.reward   = np.empty([self.size],                     dtype=np.float32)
-            self.done     = np.empty([self.size],                     dtype=np.bool)
+            self.done     = np.empty([self.size],                     dtype=bool)
         self.obs[self.next_idx] = frame
 
         ret = self.next_idx

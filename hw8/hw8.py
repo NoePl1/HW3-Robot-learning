@@ -22,6 +22,12 @@ class Q_Trainer(object):
 
         env_args = get_env_kwargs(params['env']['env_name'])
 
+        for key in env_args.keys():
+            if key == 'optimizer_spec' or key == 'q_func' or key == 'env_wrappers' or key == 'exploration_schedule':
+                self.params[key] = env_args[key]
+            else:
+                self.params['alg'][key] = env_args[key]
+
         # get agent class
         if self.params['alg']['rl_alg'] == 'explore_or_exploit':
             agent_class = ExplorationOrExploitationAgent
@@ -34,9 +40,8 @@ class Q_Trainer(object):
         self.params['alg']['train_batch_size'] = params['alg']['batch_size']
 
         # append env args to params
-        self.params = {**self.params, **env_args}
-
-        print(self.params)
+        #self.params = {**self.params, **env_args}
+        print(OmegaConf.to_yaml(params['alg']))
 
         self.rl_trainer = RL_Trainer(self.params, agent_class=agent_class)
 
@@ -48,7 +53,7 @@ class Q_Trainer(object):
             )
 
 def my_app(cfg: DictConfig): 
-    print(OmegaConf.to_yaml(cfg))
+    #print(OmegaConf.to_yaml(cfg))
     import os
     print("Command Dir:", os.getcwd())
     params = vars(cfg)
@@ -56,7 +61,7 @@ def my_app(cfg: DictConfig):
     for key, value in cfg.items():
         params[key] = value
 
-    params['eps'] = 0.2
+    params['alg']['eps'] = 0.2
     params['exploit_weight_schedule'] = ConstantSchedule(1.0)
 
     if params['env']['env_name']=='PointmassEasy-v0':
@@ -80,7 +85,7 @@ def my_app(cfg: DictConfig):
         if not params['alg']['use_rnd']:
             params['alg']['learning_starts'] = params['alg']['num_exploration_steps']
     
-    print ("params: ", params)
+    #print ("params: ", params)
     
     ##################################
     ### CREATE DIRECTORY FOR LOGGING

@@ -81,7 +81,7 @@ class CQLCritic(BaseCritic):
         q_t_logsumexp = None
         cql_loss = None
 
-        info = {'Training Loss': ptu.to_numpy(loss)}
+        info = {'Training_Loss': ptu.to_numpy(loss)}
 
         # TODO: Uncomment these lines after implementing CQL
         # info['CQL Loss'] = ptu.to_numpy(cql_loss)

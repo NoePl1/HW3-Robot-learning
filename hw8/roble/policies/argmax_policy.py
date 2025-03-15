@@ -32,7 +32,7 @@ class ArgMaxPolicy(object):
             action = self.sample_discrete(distribution)
 
         else:
-            action = q_values.argmax(axis=1)
+            action = q_values.argmax()
 
         return action
 
