@@ -56,9 +56,7 @@ class DQNCritic(BaseCritic):
             returns:
                 nothing
         """
-        #print("ob_no before from_numpy: ", ob_no.shape)
         ob_no = ptu.from_numpy(ob_no)
-        #print("ob_no before from_numpy: ", ob_no.shape)
         ac_na = ptu.from_numpy(ac_na).to(torch.long)
         #print("next_ob_no before from_numpy: ", next_ob_no.shape)
         next_ob_no = ptu.from_numpy(next_ob_no)

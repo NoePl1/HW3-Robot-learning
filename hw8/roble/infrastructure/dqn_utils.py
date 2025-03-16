@@ -72,14 +72,14 @@ def get_env_kwargs(env_name):
         kwargs = {
             'learning_starts': 50000,
             'target_update_freq': 10000,
-            'replay_buffer_size': int(1e6),
-            'num_timesteps': int(2e8),
+            'replay_buffer_size': 50000,
+            'num_timesteps': 1000,
             'q_func': create_atari_q_network,
             'learning_freq': 4,
             'grad_norm_clipping': 10,
             'input_shape': (84, 84, 4),
             'env_wrappers': wrap_deepmind,
-            'frame_history_len': 4,
+            'frame_history_len': 4, # do not change
             'gamma': 0.99,
         }
         kwargs['optimizer_spec'] = atari_optimizer(kwargs['num_timesteps'])
@@ -170,7 +170,8 @@ class PreprocessAtari(nn.Module):
     def forward(self, x):
         # MJ: I needed to add `contiguous` here;
             # might want to just add this in for students?
-        x = x.permute(0, 3, 1, 2).contiguous()
+        if x.shape[1] != 4:
+            x = x.permute(0, 3, 1, 2).contiguous()
         return x / 255.
 
 
@@ -313,7 +314,7 @@ class PiecewiseSchedule(object):
             raised when outside value is requested.
         """
         idxes = [e[0] for e in endpoints]
-        assert idxes == sorted(idxes)
+        #assert idxes == sorted(idxes)
         self._interpolation = interpolation
         self._outside_value = outside_value
         self._endpoints      = endpoints

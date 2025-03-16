@@ -14,7 +14,7 @@ class DQNAgent(object):
         self.batch_size = agent_params['alg']['batch_size']
         self.last_obs = self.env.reset()
         if isinstance(self.last_obs, LazyFrames):
-            self.last_obs = np.asarray(self.last_obs)
+            self.last_obs = np.asarray(self.last_obs).squeeze(axis=3)
 
         self.num_actions = agent_params['alg']['ac_dim']
         self.learning_starts = agent_params['alg']['learning_starts']
@@ -49,22 +49,34 @@ class DQNAgent(object):
         """
         #might need epsilon?
         self.t += 1
+        #print("lastobs shape: ", self.last_obs.shape)
         action = self.actor.get_action(self.last_obs)
         new_obs, reward, terminated, _ = self.env.step(action)
         if isinstance(new_obs, LazyFrames):
-            new_obs = np.asarray(new_obs)
+            new_obs = np.asarray(new_obs).squeeze(axis=3)
 
-        path = {
-            'observation' : self.last_obs,
-            'action' : action,
-            'reward' : reward,
-            'terminated' : terminated
-        }
+        if len(self.last_obs.shape) == 3:
+            path = {
+                'observation' : np.expand_dims(self.last_obs[-1],axis=-1),
+                'action' : action,
+                'reward' : reward,
+                'terminated' : terminated
+            }
+        else:
+            path = {
+                'observation' : self.last_obs,
+                'action' : action,
+                'reward' : reward,
+                'terminated' : terminated
+            }
         self.add_to_replay_buffer([path])
-        self.last_obs = new_obs.copy()
 
         if terminated:
             self.last_obs = self.env.reset()
+            if isinstance(self.last_obs, LazyFrames):
+                self.last_obs = np.asarray(self.last_obs).squeeze(axis=3)
+        else:
+            self.last_obs = new_obs.copy()
 
     ####################################
     ####################################

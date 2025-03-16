@@ -1,5 +1,5 @@
 env:
-    env_name: 'MsPacman-v0' #['MsPacman-v0','LunarLander-v3','PointmassEasy-v0', 'PointmassMedium-v0', 'PointmassHard-v0', 'PointmassVeryHard-v0', 'DrunkSpider-v0']
+    env_name: 'LunarLander-v3' #['MsPacman-v0','LunarLander-v3','PointmassEasy-v0', 'PointmassMedium-v0', 'PointmassHard-v0', 'PointmassVeryHard-v0', 'DrunkSpider-v0']
     max_episode_length: 200
     exp_name: 'test'
     atari: True
@@ -24,7 +24,7 @@ alg:
     no_gpu: False
     gpu_id: 0
     which_gpu: 0 #ADDED THIS
-    double_q: False
+    double_q: True
     num_agent_train_steps_per_iter: 1 ## Number of training updates after #batch_size experience is collected. 
     num_critic_updates_per_agent_update: 1 ## Number of training updates after #batch_size experience is collected.
     learning_starts: 2000  ## How much initial experience to collect before training begins
