@@ -23,7 +23,7 @@ class Q_Trainer(object):
         env_args = get_env_kwargs(params['env']['env_name'])
 
         for key in env_args.keys():
-            if key == 'optimizer_spec' or key == 'q_func' or key == 'env_wrappers' or key == 'exploration_schedule':
+            if key == 'optimizer_spec' or key == 'q_func' or key == 'env_wrappers' or key == 'exploration_schedule' or key == 'input_shape':
                 self.params[key] = env_args[key]
             else:
                 self.params['alg'][key] = env_args[key]
