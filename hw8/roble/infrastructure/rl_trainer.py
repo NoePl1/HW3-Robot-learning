@@ -61,11 +61,12 @@ class RL_Trainer(object):
         self.env = gym.make(self.params['env']['env_name'])
         self.eval_env = gym.make(self.params['env']['env_name'])
         print(self.params['env']['env_name'])
-        if not ('pointmass' in self.params['env']['env_name']):
-            import matplotlib
-            #matplotlib.use('Agg')
-            self.env.set_logdir(self.params['logging']['logdir'] + '/expl_')
-            self.eval_env.set_logdir(self.params['logging']['logdir'] + '/eval_')
+
+        #if not ('pointmass' in self.params['env']['env_name']):
+        #    import matplotlib
+        #    #matplotlib.use('Agg')
+        #    self.env.set_logdir(self.params['logging']['logdir'] + '/expl_')
+        #    self.eval_env.set_logdir(self.params['logging']['logdir'] + '/eval_')
 
         if self.params['logging']['video_log_freq'] > 0:
             self.episode_trigger = lambda episode: episode % self.params['logging']['video_log_freq'] == 0
