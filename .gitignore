@@ -175,7 +175,7 @@ idea folder.
 # mac os Ds_Store
 .DS_Store
 outputs/
-data/
+#data/
 .project
 .pydevproject
 /logs/
