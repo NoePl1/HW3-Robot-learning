@@ -1,5 +1,5 @@
 import numpy as np
-
+from gym.wrappers.frame_stack import LazyFrames
 
 from hw8.roble.infrastructure.dqn_utils import MemoryOptimizedReplayBuffer, PiecewiseSchedule
 from hw8.roble.policies.argmax_policy import ArgMaxPolicy
@@ -13,6 +13,9 @@ class DQNAgent(object):
         self.agent_params = agent_params
         self.batch_size = agent_params['alg']['batch_size']
         self.last_obs = self.env.reset()
+        if isinstance(self.last_obs, LazyFrames):
+            self.last_obs = np.asarray(self.last_obs)
+            print("LazyFrames")
 
         self.num_actions = agent_params['alg']['ac_dim']
         self.learning_starts = agent_params['alg']['learning_starts']
@@ -49,6 +52,9 @@ class DQNAgent(object):
         self.t += 1
         action = self.actor.get_action(self.last_obs)
         new_obs, reward, terminated, _ = self.env.step(action)
+        if isinstance(new_obs, LazyFrames):
+            new_obs = np.asarray(new_obs)
+            print("LazyFrames")
 
         path = {
             'observation' : self.last_obs,
