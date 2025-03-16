@@ -57,7 +57,10 @@ class DQNAgent(object):
             'terminated' : terminated
         }
         self.add_to_replay_buffer([path])
-        self.last_obs = new_obs
+        self.last_obs = new_obs.copy()
+
+        if terminated:
+            self.last_obs = self.env.reset()
 
     ####################################
     ####################################

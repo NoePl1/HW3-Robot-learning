@@ -44,7 +44,19 @@ class CQLCritic(BaseCritic):
 
     def dqn_loss(self, ob_no, ac_na, next_ob_no, reward_n, terminal_n):
         """ Implement DQN Loss """
+        qa_t_values = self.q_net(ob_no)
+        q_t_values = torch.gather(qa_t_values, 1, ac_na.unsqueeze(1)).squeeze(1)
+        qa_tp1_values = self.q_net_target(next_ob_no)
+        if self.double_q:
+            q_best_action = torch.argmax(qa_t_values, dim=1, keepdim=True)
+            q_tp1 = torch.gather(qa_tp1_values, dim=1, index=q_best_action).squeeze(1)
+        else:
+            q_tp1, _ = qa_tp1_values.max(dim=1)
+        target = reward_n + self.gamma * q_tp1 * (1 - terminal_n)
+        target = target.detach()
 
+        assert q_t_values.shape == target.shape
+        loss = self.loss(q_t_values, target)
         return loss, qa_t_values, q_t_values
 
 
@@ -71,23 +83,27 @@ class CQLCritic(BaseCritic):
         terminal_n = ptu.from_numpy(terminal_n)
 
         # Compute the DQN Loss 
-        loss, qa_t_values, q_t_values = self.dqn_loss(
-            ob_no, ac_na, next_ob_no, reward_n, terminal_n
-            )
+        loss, qa_t_values, q_t_values = self.dqn_loss(ob_no, ac_na, next_ob_no, reward_n, terminal_n)
         
         # CQL Implementation
-        # TODO: Implement CQL as described in the pdf and paper
-        # Hint: After calculating cql_loss, augment the loss appropriately
-        q_t_logsumexp = None
-        cql_loss = None
+        q_all_values = self.q_net(ob_no)
+        q_t_logsumexp = torch.logsumexp(q_all_values, dim=1).mean()
+        cql_loss = self.cql_alpha * (q_t_logsumexp - q_t_values.mean())
 
-        info = {'Training_Loss': ptu.to_numpy(loss)}
+        # Total loss: DQN loss + CQL loss
+        total_loss = loss + cql_loss
 
-        # TODO: Uncomment these lines after implementing CQL
-        # info['CQL Loss'] = ptu.to_numpy(cql_loss)
-        # info['Data q-values'] = ptu.to_numpy(q_t_values).mean()
-        # info['OOD q-values'] = ptu.to_numpy(q_t_logsumexp).mean()
-        
+        info = {'Training_Loss': ptu.to_numpy(total_loss)}
+
+        info['CQL Loss'] = ptu.to_numpy(cql_loss)
+        info['Data q-values'] = ptu.to_numpy(q_t_values).mean()
+        info['OOD q-values'] = ptu.to_numpy(q_t_logsumexp).mean()
+
+        # Perform gradient update
+        self.optimizer.zero_grad()
+        total_loss.backward()
+        utils.clip_grad_value_(self.q_net.parameters(), self.grad_norm_clipping)
+        self.optimizer.step()
         self.learning_rate_scheduler.step()
 
         return info
