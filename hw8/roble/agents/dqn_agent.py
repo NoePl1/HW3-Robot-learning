@@ -49,8 +49,14 @@ class DQNAgent(object):
         """
         #might need epsilon?
         self.t += 1
+
+        perform_random_action = np.random.random() < self.eps or self.t < self.learning_starts
+
+        if perform_random_action:
+            action = self.env.action_space.sample()
+        else:
+            action = self.actor.get_action(self.last_obs)
         #print("lastobs shape: ", self.last_obs.shape)
-        action = self.actor.get_action(self.last_obs)
         new_obs, reward, terminated, _ = self.env.step(action)
         if isinstance(new_obs, LazyFrames):
             new_obs = np.asarray(new_obs).squeeze(axis=3)
