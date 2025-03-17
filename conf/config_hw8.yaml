@@ -58,5 +58,5 @@ logging:
     video_log_freq: 1 # How often to generate a video to log/
     scalar_log_freq: 1 # How often to log training information and run evaluation during training.
     save_params: false # Should the parameters given to the script be saved? (Always...)
-    random_seed: 3
+    random_seed: 12
     logdir: "hw8/logs"
