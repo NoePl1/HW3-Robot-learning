@@ -1,13 +1,13 @@
 env:
-    env_name: 'LunarLander-v3' #['MsPacman-v0','LunarLander-v3','PointmassEasy-v0', 'PointmassMedium-v0', 'PointmassHard-v0', 'PointmassVeryHard-v0', 'DrunkSpider-v0']
+    env_name: 'MsPacman-v0' #['MsPacman-v0','LunarLander-v3','PointmassEasy-v0', 'PointmassMedium-v0', 'PointmassHard-v0', 'PointmassVeryHard-v0', 'DrunkSpider-v0']
     max_episode_length: 200
-    exp_name: 'q1_5h'
+    exp_name: 'q1'
     atari: True
 
 alg:
     rl_alg: 'dqn' ## RL training algorithm ['explore_exploit', 'dqn', 'cql', 'safe_rl']
-    n_iter: 100
-    batch_size: 128        ## The min amount of experience to collect before a training update
+    n_iter: 500
+    batch_size: 256        ## The min amount of experience to collect before a training update
     train_batch_size: 256  ## training batch size used for computing gradients of q function or policy
     eval_batch_size: 1000  ## How much experience should be collected over the environment to evaluate the average reward of a policy
     use_rnd: True
@@ -24,7 +24,7 @@ alg:
     no_gpu: False
     gpu_id: 0
     which_gpu: 0 #ADDED THIS
-    double_q: True
+    double_q: False
     num_agent_train_steps_per_iter: 1 ## Number of training updates after #batch_size experience is collected. 
     num_critic_updates_per_agent_update: 1 ## Number of training updates after #batch_size experience is collected.
     learning_starts: 2000  ## How much initial experience to collect before training begins
@@ -58,5 +58,5 @@ logging:
     video_log_freq: 1 # How often to generate a video to log/
     scalar_log_freq: 1 # How often to log training information and run evaluation during training.
     save_params: false # Should the parameters given to the script be saved? (Always...)
-    random_seed: 12
+    random_seed: 42
     logdir: "hw8/logs"
