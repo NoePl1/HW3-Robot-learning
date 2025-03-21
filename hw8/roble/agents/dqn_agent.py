@@ -20,6 +20,7 @@ class DQNAgent(object):
         self.learning_starts = agent_params['alg']['learning_starts']
         self.learning_freq = agent_params['alg']['learning_freq']
         self.target_update_freq = agent_params['alg']['target_update_freq']
+        self.eps = agent_params['alg']['eps']
 
         self.replay_buffer_idx = None
         self.exploration = agent_params['exploration_schedule']
@@ -35,10 +36,11 @@ class DQNAgent(object):
         self.num_param_updates = 0
 
     def add_to_replay_buffer(self, paths):
-        for path in paths:
-            self.replay_buffer_idx = self.replay_buffer.store_frame(path["observation"])
-            self.replay_buffer.encode_recent_observation()
-            self.replay_buffer.store_effect(self.replay_buffer_idx, path["action"], path["reward"], path["terminated"])
+        if paths is not None:
+            for path in paths:
+                self.replay_buffer_idx = self.replay_buffer.store_frame(path["observation"])
+                self.replay_buffer.encode_recent_observation()
+                self.replay_buffer.store_effect(self.replay_buffer_idx, path["action"], path["reward"], path["terminated"])
 
     def step_env(self):
         """

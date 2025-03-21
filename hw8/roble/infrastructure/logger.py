@@ -1,3 +1,6 @@
+import matplotlib
+matplotlib.use('Agg')  # Ensure this is set before pyplot
+import matplotlib.pyplot as plt
 from moviepy.editor import ImageSequenceClip
 from tensorboardX import SummaryWriter
 from csv import DictWriter

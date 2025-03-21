@@ -71,7 +71,7 @@ def get_env_kwargs(env_name):
     if env_name in ['MsPacman-v0', 'PongNoFrameskip-v4']:
         kwargs = {
             'learning_starts': 10000,
-            'target_update_freq': 10000,
+            'target_update_freq': 3000,
             'replay_buffer_size': 50000,
             'num_timesteps': 1000,
             'q_func': create_atari_q_network,
@@ -119,7 +119,7 @@ def get_env_kwargs(env_name):
             'target_update_freq': 300,
             'grad_norm_clipping': 10,
             'lander': False,
-            'num_timesteps': 50000,
+            'num_timesteps': 15000,
             'env_wrappers': pointmass_empty_wrapper
         }
         kwargs['exploration_schedule'] = lander_exploration_schedule(kwargs['num_timesteps'])
@@ -195,7 +195,7 @@ def atari_exploration_schedule(num_timesteps):
     return PiecewiseSchedule(
         [
             (0, 1.0),
-            (1e6, 0.1),
+            (1e2, 0.1),
             (num_timesteps / 8, 0.01),
         ], outside_value=0.01
     )
@@ -314,7 +314,7 @@ class PiecewiseSchedule(object):
             raised when outside value is requested.
         """
         idxes = [e[0] for e in endpoints]
-        #assert idxes == sorted(idxes)
+        assert idxes == sorted(idxes)
         self._interpolation = interpolation
         self._outside_value = outside_value
         self._endpoints      = endpoints

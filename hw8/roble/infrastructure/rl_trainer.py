@@ -68,6 +68,12 @@ class RL_Trainer(object):
         #    self.env.set_logdir(self.params['logging']['logdir'] + '/expl_')
         #    self.eval_env.set_logdir(self.params['logging']['logdir'] + '/eval_')
 
+        if ('Pointmass' in self.params['env']['env_name']):
+            import matplotlib
+            matplotlib.use('Agg')
+            self.env.set_logdir(self.params['logging']['logdir'] + '/expl_')
+            self.eval_env.set_logdir(self.params['logging']['logdir'] + '/eval_')
+
         if self.params['logging']['video_log_freq'] > 0:
             self.episode_trigger = lambda episode: episode % self.params['logging']['video_log_freq'] == 0
         else:
@@ -80,7 +86,7 @@ class RL_Trainer(object):
             #self.env = wrappers.RecordVideo(self.env, os.path.join(self.params['logging']['logdir'], "gym"), episode_trigger=self.episode_trigger)
             self.env = params['env_wrappers'](self.env)
 
-            if self.params['env']['env_name'] != 'LunarLander-v3':
+            if self.params['env']['env_name'] != 'LunarLander-v3' and ('Pointmass' not in self.params['env']['env_name']):
                 self.env = wrappers.FrameStack(self.env, params['alg']['frame_history_len'])
 
 
@@ -88,7 +94,7 @@ class RL_Trainer(object):
             self.eval_env = ReturnWrapper(self.eval_env)
             #self.eval_env = wrappers.RecordVideo(self.eval_env, os.path.join(self.params['logging']['logdir'], "gym"), episode_trigger=self.episode_trigger)
             self.eval_env = params['env_wrappers'](self.eval_env)
-            if self.params['env']['env_name'] != 'LunarLander-v3':
+            if self.params['env']['env_name'] != 'LunarLander-v3' and ('Pointmass' not in self.params['env']['env_name']):
                 self.eval_env = wrappers.FrameStack(self.eval_env, params['alg']['frame_history_len'])
 
             self.mean_episode_reward = -float('nan')
@@ -211,13 +217,15 @@ class RL_Trainer(object):
 
             # Log densities and output trajectories
             if isinstance(self.agent, ExplorationOrExploitationAgent) and (itr % print_period == 0):
-                self.dump_density_graphs(itr)
+                #self.dump_density_graphs(itr)
+                pass
 
             # log/save
             if self.logvideo or self.logmetrics:
                 # perform logging
                 print('\nBeginning logging procedure...')
                 if isinstance(self.agent, ExplorationOrExploitationAgent) or isinstance(self.agent, DQNAgent):
+                    
                     self.perform_dqn_logging(all_logs)
                 else:
                     self.perform_logging(itr, paths, eval_policy, train_video_paths, all_logs)

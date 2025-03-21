@@ -10,7 +10,7 @@ from hw8.roble.infrastructure import pytorch_util as ptu
 
 class CQLCritic(BaseCritic):
 
-    def __init__(self, hparams, optimizer_spec, **kwargs):
+    def __init__(self, hparams, **kwargs):
         super().__init__(**kwargs)
         self.env_name = hparams['env']['env_name']
         self.ob_dim = hparams['alg']['ob_dim']
@@ -25,7 +25,7 @@ class CQLCritic(BaseCritic):
         self.grad_norm_clipping = hparams['alg']['grad_norm_clipping']
         self.gamma = hparams['alg']['gamma']
 
-        self.optimizer_spec = optimizer_spec
+        self.optimizer_spec = hparams['optimizer_spec']
         network_initializer = hparams['q_func']
         self.q_net = network_initializer(self.ob_dim, self.ac_dim)
         self.q_net_target = network_initializer(self.ob_dim, self.ac_dim)
@@ -95,9 +95,9 @@ class CQLCritic(BaseCritic):
 
         info = {'Training_Loss': ptu.to_numpy(total_loss)}
 
-        info['CQL Loss'] = ptu.to_numpy(cql_loss)
-        info['Data q-values'] = ptu.to_numpy(q_t_values).mean()
-        info['OOD q-values'] = ptu.to_numpy(q_t_logsumexp).mean()
+        info['CQL_Loss'] = ptu.to_numpy(cql_loss)
+        info['Data_q-values'] = ptu.to_numpy(q_t_values).mean()
+        info['OOD_q-values'] = ptu.to_numpy(q_t_logsumexp).mean()
 
         # Perform gradient update
         self.optimizer.zero_grad()

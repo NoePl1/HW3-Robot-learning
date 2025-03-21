@@ -1,20 +1,20 @@
 env:
-    env_name: 'MsPacman-v0' #['MsPacman-v0','LunarLander-v3','PointmassEasy-v0', 'PointmassMedium-v0', 'PointmassHard-v0', 'PointmassVeryHard-v0', 'DrunkSpider-v0']
+    env_name: 'PointmassMedium-v0' #['MsPacman-v0','LunarLander-v3','PointmassEasy-v0', 'PointmassMedium-v0', 'PointmassHard-v0', 'PointmassVeryHard-v0', 'DrunkSpider-v0']
     max_episode_length: 200
-    exp_name: 'q1'
+    exp_name: 'part3_0_3_alpha'
     atari: True
 
 alg:
-    rl_alg: 'dqn' ## RL training algorithm ['explore_exploit', 'dqn', 'cql', 'safe_rl']
-    n_iter: 500
+    rl_alg: 'explore_or_exploit' ## RL training algorithm ['explore_or_exploit', 'dqn', 'cql', 'safe_rl']
+    n_iter: 65
     batch_size: 256        ## The min amount of experience to collect before a training update
     train_batch_size: 256  ## training batch size used for computing gradients of q function or policy
     eval_batch_size: 1000  ## How much experience should be collected over the environment to evaluate the average reward of a policy
     use_rnd: True
-    num_exploration_steps: 1000
-    unsupervised_exploration: False
+    num_exploration_steps: 10000
+    unsupervised_exploration: True
     offline_exploitation: True
-    cql_alpha: 0.0
+    cql_alpha: 0.3
     exploit_rew_shift: 0.0
     exploit_rew_scale: 1.0
     rnd_output_size: 5
@@ -24,8 +24,8 @@ alg:
     no_gpu: False
     gpu_id: 0
     which_gpu: 0 #ADDED THIS
-    double_q: False
-    num_agent_train_steps_per_iter: 1 ## Number of training updates after #batch_size experience is collected. 
+    double_q: True
+    num_agent_train_steps_per_iter: 5 ## Number of training updates after #batch_size experience is collected. 
     num_critic_updates_per_agent_update: 1 ## Number of training updates after #batch_size experience is collected.
     learning_starts: 2000  ## How much initial experience to collect before training begins
     learning_freq: 1 
