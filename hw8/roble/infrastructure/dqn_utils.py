@@ -100,7 +100,7 @@ def get_env_kwargs(env_name):
             'target_update_freq': 3000,
             'grad_norm_clipping': 10,
             'lander': True,
-            'num_timesteps': 4500,
+            'num_timesteps': 10000,
             'env_wrappers': lunar_empty_wrapper
         }
         kwargs['exploration_schedule'] = lander_exploration_schedule(kwargs['num_timesteps'])
@@ -119,7 +119,7 @@ def get_env_kwargs(env_name):
             'target_update_freq': 300,
             'grad_norm_clipping': 10,
             'lander': False,
-            'num_timesteps': 15000,
+            'num_timesteps': 10000,
             'env_wrappers': pointmass_empty_wrapper
         }
         kwargs['exploration_schedule'] = lander_exploration_schedule(kwargs['num_timesteps'])
@@ -194,9 +194,9 @@ def create_atari_q_network(ob_dim, num_actions):
 def atari_exploration_schedule(num_timesteps):
     return PiecewiseSchedule(
         [
-            (0, 1.0),
-            (1e2, 0.1),
-            (num_timesteps / 8, 0.01),
+            (0, 1.0),                     # Start fully exploring at timestep 0.
+            (0.8 * num_timesteps, 0.1),     # Linearly decay to 0.1 by 80% of training (800k timesteps).
+            (num_timesteps, 0.05),
         ], outside_value=0.01
     )
 
